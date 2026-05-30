@@ -1,0 +1,991 @@
+{
+    "annotations": [
+        {
+            "kind": "AnnotationQuery",
+            "spec": {
+                "builtIn": true,
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "query": {
+                    "datasource": {
+                        "name": "-- Grafana --"
+                    },
+                    "group": "grafana",
+                    "kind": "DataQuery",
+                    "spec": {},
+                    "version": "v0"
+                }
+            }
+        }
+    ],
+    "cursorSync": "Off",
+    "editable": true,
+    "elements": {
+        "panel-1": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "time_series",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT\n    $__timeGroupAlias(timestamp, '1m'),\n    meter_id,\n    AVG(power) AS power_w\nFROM energy_readings\nWHERE\n    $__timeFilter(timestamp)\n    AND meter_id IN (\n        SELECT DISTINCT meter_id\n        FROM energy_readings\n        ORDER BY meter_id\n        LIMIT 5\n    )\nGROUP BY 1, meter_id\nORDER BY 1",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "Real-time Power — Last Hour"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 1,
+                "links": [],
+                "title": "Real-time Power — Last Hour",
+                "vizConfig": {
+                    "group": "timeseries",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "Watt (W)",
+                                    "axisPlacement": "auto",
+                                    "barAlignment": 0,
+                                    "barWidthFactor": 0.6,
+                                    "drawStyle": "line",
+                                    "fillOpacity": 0,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "insertNulls": false,
+                                    "lineInterpolation": "linear",
+                                    "lineWidth": 1,
+                                    "pointSize": 5,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "showPoints": "auto",
+                                    "showValues": false,
+                                    "spanNulls": false,
+                                    "stacking": {
+                                        "group": "A",
+                                        "mode": "none"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "annotations": {
+                                "clustering": -1,
+                                "multiLane": false
+                            },
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            }
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-2": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "WITH today AS (\n    SELECT\n        EXTRACT(HOUR FROM bucket AT TIME ZONE 'Africa/Kigali')::int AS hour,\n        SUM(total_energy) / 1000 AS energy_kwh,\n        'Today' AS day\n    FROM energy_readings_hourly\n    WHERE bucket >= DATE_TRUNC('day', NOW() AT TIME ZONE 'Africa/Kigali')\n                      AT TIME ZONE 'Africa/Kigali'\n      AND bucket <= NOW()\n    GROUP BY hour\n),\nyesterday AS (\n    SELECT\n        EXTRACT(HOUR FROM bucket AT TIME ZONE 'Africa/Kigali')::int AS hour,\n        SUM(total_energy) / 1000 AS energy_kwh,\n        'Yesterday' AS day\n    FROM energy_readings_hourly\n    WHERE bucket >= (DATE_TRUNC('day', NOW() AT TIME ZONE 'Africa/Kigali')\n                      AT TIME ZONE 'Africa/Kigali') - INTERVAL '1 day'\n      AND bucket <   DATE_TRUNC('day', NOW() AT TIME ZONE 'Africa/Kigali')\n                      AT TIME ZONE 'Africa/Kigali'\n    GROUP BY hour\n)\nSELECT hour, energy_kwh, day\nFROM today\nUNION ALL\nSELECT hour, energy_kwh, day\nFROM yesterday\nORDER BY day, hour",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 2,
+                "links": [],
+                "title": "Daily Consumption — Today vs Yesterday",
+                "vizConfig": {
+                    "group": "barchart",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "kilowatt-hour (kWh)",
+                                    "axisPlacement": "auto",
+                                    "fillOpacity": 80,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "lineWidth": 1,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "barRadius": 0,
+                            "barWidth": 0.97,
+                            "colorByField": "day",
+                            "fullHighlight": false,
+                            "groupWidth": 0.7,
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "orientation": "auto",
+                            "showValue": "auto",
+                            "stacking": "none",
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            },
+                            "xField": "day",
+                            "xTickLabelRotation": 0,
+                            "xTickLabelSpacing": 0
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-3": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "time_series",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT\n    bucket AT TIME ZONE 'Africa/Kigali' AS time,\n    SUM(total_energy) / 1000            AS total_kwh,\n    AVG(avg_power)                      AS avg_power_w,\n    MAX(max_power)                      AS peak_power_w\nFROM energy_readings_daily\nWHERE bucket >= NOW() - INTERVAL '7 days'\nGROUP BY bucket\nORDER BY bucket",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 3,
+                "links": [],
+                "title": "Weekly Energy Trend",
+                "vizConfig": {
+                    "group": "timeseries",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "kilowatt-hour (kWh)",
+                                    "axisPlacement": "auto",
+                                    "barAlignment": 0,
+                                    "barWidthFactor": 0.6,
+                                    "drawStyle": "line",
+                                    "fillOpacity": 0,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "insertNulls": false,
+                                    "lineInterpolation": "linear",
+                                    "lineWidth": 1,
+                                    "pointSize": 5,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "showPoints": "auto",
+                                    "showValues": false,
+                                    "spanNulls": false,
+                                    "stacking": {
+                                        "group": "A",
+                                        "mode": "none"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "annotations": {
+                                "clustering": -1,
+                                "multiLane": false
+                            },
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            }
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-4": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT\n    'Region ' || SUBSTRING(meter_id, 1, 1) AS region,\n    SUM(total_energy) / 1000000            AS total_mwh\nFROM energy_readings_daily\nWHERE bucket >= DATE_TRUNC('month', NOW() AT TIME ZONE 'Africa/Kigali')\n                  AT TIME ZONE 'Africa/Kigali'\n  AND bucket <   (DATE_TRUNC('month', NOW() AT TIME ZONE 'Africa/Kigali')\n                  AT TIME ZONE 'Africa/Kigali') + INTERVAL '1 month'\nGROUP BY region\nORDER BY region",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 4,
+                "links": [],
+                "title": "Monthly Energy by Region",
+                "vizConfig": {
+                    "group": "barchart",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "megawatt-hour (MWh)",
+                                    "axisPlacement": "auto",
+                                    "fillOpacity": 80,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "lineWidth": 1,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "barRadius": 0,
+                            "barWidth": 0.97,
+                            "fullHighlight": false,
+                            "groupWidth": 0.7,
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "orientation": "auto",
+                            "showValue": "auto",
+                            "stacking": "none",
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            },
+                            "xTickLabelRotation": 0,
+                            "xTickLabelSpacing": 0
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-5": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT COUNT(DISTINCT meter_id)\nFROM energy_readings\nWHERE timestamp >= NOW() - INTERVAL '1 hour'",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 5,
+                "links": [],
+                "title": "Active meters ",
+                "vizConfig": {
+                    "group": "stat",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "thresholds"
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "colorMode": "value",
+                            "graphMode": "area",
+                            "justifyMode": "auto",
+                            "orientation": "auto",
+                            "percentChangeColorMode": "standard",
+                            "reduceOptions": {
+                                "calcs": [
+                                    "lastNotNull"
+                                ],
+                                "fields": "",
+                                "values": false
+                            },
+                            "showPercentChange": false,
+                            "textMode": "auto",
+                            "wideLayout": true
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-6": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT ROUND(\n    EXTRACT(EPOCH FROM (NOW() - MAX(bucket))) / 3600, 1\n) AS lag_hours\nFROM energy_readings_hourly",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 6,
+                "links": [],
+                "title": "Aggregate freshness — hourly lag",
+                "vizConfig": {
+                    "group": "stat",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "thresholds"
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "colorMode": "value",
+                            "graphMode": "area",
+                            "justifyMode": "auto",
+                            "orientation": "auto",
+                            "percentChangeColorMode": "standard",
+                            "reduceOptions": {
+                                "calcs": [
+                                    "lastNotNull"
+                                ],
+                                "fields": "",
+                                "values": false
+                            },
+                            "showPercentChange": false,
+                            "textMode": "auto",
+                            "wideLayout": true
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-7": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "dataset": "energy_db",
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT ROUND(\n    EXTRACT(EPOCH FROM (NOW() - MAX(bucket))) / 3600, 1\n) AS lag_hours\nFROM energy_readings_daily",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 7,
+                "links": [],
+                "title": "Aggregate freshness — daily lag",
+                "vizConfig": {
+                    "group": "stat",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "thresholds"
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "red",
+                                            "value": 80
+                                        }
+                                    ]
+                                }
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "colorMode": "value",
+                            "graphMode": "area",
+                            "justifyMode": "auto",
+                            "orientation": "auto",
+                            "percentChangeColorMode": "standard",
+                            "reduceOptions": {
+                                "calcs": [
+                                    "lastNotNull"
+                                ],
+                                "fields": "",
+                                "values": false
+                            },
+                            "showPercentChange": false,
+                            "textMode": "auto",
+                            "wideLayout": true
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        }
+    },
+    "layout": {
+        "kind": "GridLayout",
+        "spec": {
+            "items": [
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-1"
+                        },
+                        "height": 8,
+                        "width": 12,
+                        "x": 0,
+                        "y": 0
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-2"
+                        },
+                        "height": 8,
+                        "width": 12,
+                        "x": 12,
+                        "y": 0
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-3"
+                        },
+                        "height": 8,
+                        "width": 12,
+                        "x": 0,
+                        "y": 8
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-4"
+                        },
+                        "height": 8,
+                        "width": 12,
+                        "x": 12,
+                        "y": 8
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-5"
+                        },
+                        "height": 3,
+                        "width": 7,
+                        "x": 0,
+                        "y": 16
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-6"
+                        },
+                        "height": 3,
+                        "width": 9,
+                        "x": 7,
+                        "y": 16
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-7"
+                        },
+                        "height": 3,
+                        "width": 8,
+                        "x": 16,
+                        "y": 16
+                    }
+                }
+            ]
+        }
+    },
+    "links": [],
+    "liveNow": false,
+    "preferences": {
+        "layout": {
+            "kind": "GridLayout",
+            "spec": {
+                "items": []
+            }
+        }
+    },
+    "preload": false,
+    "tags": [],
+    "timeSettings": {
+        "autoRefresh": "5s",
+        "autoRefreshIntervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+        ],
+        "fiscalYearStartMonth": 0,
+        "from": "now-7d",
+        "hideTimepicker": false,
+        "timezone": "browser",
+        "to": "now"
+    },
+    "title": "Smart Energy Grid Dashboard",
+    "variables": []
+}

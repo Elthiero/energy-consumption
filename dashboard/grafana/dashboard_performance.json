@@ -1,0 +1,459 @@
+{
+    "annotations": [
+        {
+            "kind": "AnnotationQuery",
+            "spec": {
+                "builtIn": true,
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "query": {
+                    "datasource": {
+                        "name": "-- Grafana --"
+                    },
+                    "group": "grafana",
+                    "kind": "DataQuery",
+                    "spec": {},
+                    "version": "v0"
+                }
+            }
+        }
+    ],
+    "cursorSync": "Off",
+    "editable": true,
+    "elements": {
+        "panel-1": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT '15min - raw' as query_name, 4.37 as execution_time_ms UNION ALL SELECT '15min - continuous aggregate', 1.55 UNION ALL SELECT 'hourly - raw', 16.29 UNION ALL SELECT 'hourly - continuous aggregate', 2.9 UNION ALL SELECT 'daily - raw', 32.59 UNION ALL SELECT 'daily - continuous aggregate', 3.82;",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 1,
+                "links": [],
+                "title": "Raw vs Continuous Aggregates",
+                "vizConfig": {
+                    "group": "barchart",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "fillOpacity": 80,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "lineWidth": 1,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        }
+                                    ]
+                                },
+                                "unit": "ms"
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "barRadius": 0,
+                            "barWidth": 0.97,
+                            "fullHighlight": false,
+                            "groupWidth": 0.7,
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "orientation": "horizontal",
+                            "showValue": "auto",
+                            "stacking": "none",
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            },
+                            "xField": "query_name",
+                            "xTickLabelRotation": 0,
+                            "xTickLabelSpacing": 0
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-2": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "format": "table",
+                                            "rawSql": "SELECT '3-hour chunks' as hypertable, 1255.0 as uncompressed_mb, 413.0 as compressed_mb UNION ALL SELECT '1-day chunks', 1224.0, 410.0 UNION ALL SELECT '1-week chunks', 1320.0, 541.0;"
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 2,
+                "links": [],
+                "title": "Storage Efficiency - Compression",
+                "vizConfig": {
+                    "group": "barchart",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "fillOpacity": 80,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "lineWidth": 1,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        }
+                                    ]
+                                },
+                                "unit": "decbytes"
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "barRadius": 0,
+                            "barWidth": 0.97,
+                            "fullHighlight": false,
+                            "groupWidth": 0.7,
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "orientation": "auto",
+                            "showValue": "auto",
+                            "stacking": "none",
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            },
+                            "xField": "hypertable",
+                            "xTickLabelRotation": 0,
+                            "xTickLabelSpacing": 0
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        },
+        "panel-3": {
+            "kind": "Panel",
+            "spec": {
+                "data": {
+                    "kind": "QueryGroup",
+                    "spec": {
+                        "queries": [
+                            {
+                                "kind": "PanelQuery",
+                                "spec": {
+                                    "hidden": false,
+                                    "query": {
+                                        "datasource": {
+                                            "name": "efmq8a5gprim8c"
+                                        },
+                                        "group": "grafana-postgresql-datasource",
+                                        "kind": "DataQuery",
+                                        "spec": {
+                                            "editorMode": "code",
+                                            "format": "table",
+                                            "rawQuery": true,
+                                            "rawSql": "SELECT query, chunk_strategy, execution_time_ms FROM ( VALUES ('Q1: Hourly Average Today 3h', '3-hour', 45.48), ('Q1: Hourly Average Today 1D', '1-day', 15.20), ('Q1: Hourly Average Today 1W', '1-week', 8.96), ('Q2: Peak Weekly 15m 3H', '3-hour', 238.30), ('Q2: Peak Weekly 15m 1D', '1-day', 247.36), ('Q2: Peak Weekly 15m 1W', '1-week', 239.65), ('Q3: Monthly Meter Summary 3H', '3-hour', 2621.14), ('Q3: Monthly Meter Summary 1D', '1-day', 2353.18), ('Q3: Monthly Meter Summary 1W', '1-week', 1022.26), ('Q4: Full Dataset Scan', '3-hour', 301.91), ('Q4: Full Dataset Scan', '1-day', 278.02), ('Q4: Full Dataset Scan', '1-week', 272.72) ) AS t(query, chunk_strategy, execution_time_ms);",
+                                            "sql": {
+                                                "columns": [
+                                                    {
+                                                        "parameters": [],
+                                                        "type": "function"
+                                                    }
+                                                ],
+                                                "groupBy": [
+                                                    {
+                                                        "property": {
+                                                            "type": "string"
+                                                        },
+                                                        "type": "groupBy"
+                                                    }
+                                                ],
+                                                "limit": 50
+                                            }
+                                        },
+                                        "version": "v0"
+                                    },
+                                    "refId": "A"
+                                }
+                            }
+                        ],
+                        "queryOptions": {},
+                        "transformations": []
+                    }
+                },
+                "description": "",
+                "id": 3,
+                "links": [],
+                "title": "Query Performance by Chunk Strategy",
+                "vizConfig": {
+                    "group": "barchart",
+                    "kind": "VizConfig",
+                    "spec": {
+                        "fieldConfig": {
+                            "defaults": {
+                                "color": {
+                                    "mode": "palette-classic"
+                                },
+                                "custom": {
+                                    "axisBorderShow": false,
+                                    "axisCenteredZero": false,
+                                    "axisColorMode": "text",
+                                    "axisLabel": "",
+                                    "axisPlacement": "auto",
+                                    "fillOpacity": 80,
+                                    "gradientMode": "none",
+                                    "hideFrom": {
+                                        "legend": false,
+                                        "tooltip": false,
+                                        "viz": false
+                                    },
+                                    "lineWidth": 1,
+                                    "scaleDistribution": {
+                                        "type": "linear"
+                                    },
+                                    "thresholdsStyle": {
+                                        "mode": "off"
+                                    }
+                                },
+                                "thresholds": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "green",
+                                            "value": 0
+                                        }
+                                    ]
+                                },
+                                "unit": "ms"
+                            },
+                            "overrides": []
+                        },
+                        "options": {
+                            "barRadius": 0,
+                            "barWidth": 0.85,
+                            "fullHighlight": false,
+                            "groupWidth": 0.7,
+                            "legend": {
+                                "calcs": [],
+                                "displayMode": "list",
+                                "placement": "bottom",
+                                "showLegend": true
+                            },
+                            "orientation": "horizontal",
+                            "showValue": "auto",
+                            "stacking": "none",
+                            "tooltip": {
+                                "hideZeros": false,
+                                "mode": "single",
+                                "sort": "none"
+                            },
+                            "xField": "query",
+                            "xTickLabelRotation": 0,
+                            "xTickLabelSpacing": 0
+                        }
+                    },
+                    "version": "13.0.1+security-01"
+                }
+            }
+        }
+    },
+    "layout": {
+        "kind": "GridLayout",
+        "spec": {
+            "items": [
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-1"
+                        },
+                        "height": 8,
+                        "width": 12,
+                        "x": 0,
+                        "y": 0
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-2"
+                        },
+                        "height": 8,
+                        "width": 12,
+                        "x": 12,
+                        "y": 0
+                    }
+                },
+                {
+                    "kind": "GridLayoutItem",
+                    "spec": {
+                        "element": {
+                            "kind": "ElementReference",
+                            "name": "panel-3"
+                        },
+                        "height": 10,
+                        "width": 24,
+                        "x": 0,
+                        "y": 8
+                    }
+                }
+            ]
+        }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [
+        "timescaledb",
+        "performance",
+        "energy"
+    ],
+    "timeSettings": {
+        "autoRefresh": "",
+        "autoRefreshIntervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+        ],
+        "fiscalYearStartMonth": 0,
+        "from": "now-6h",
+        "hideTimepicker": false,
+        "timezone": "browser",
+        "to": "now"
+    },
+    "title": "TimescaleDB Energy Readings - Performance & Compression Dashboard",
+    "variables": []
+}

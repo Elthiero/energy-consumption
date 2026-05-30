@@ -1,0 +1,47 @@
+services:
+  # 1. TimescaleDB (Time-Series Database)
+  timescaledb:
+    image: timescale/timescaledb-ha:pg15
+    container_name: energy_timescaledb
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      # These variables are automatically pulled from your .env file
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      # Persists your 8.4 million rows even if the container is destroyed
+      - timescaledb_data:/home/postgres/pgdata/data
+    networks:
+      - energy_network
+
+  # 2. EMQX (MQTT Message Broker)
+  emqx:
+    image: emqx:5
+    container_name: energy_emqx_broker
+    restart: unless-stopped
+    ports:
+      - "1884:1883"    # Core MQTT TCP port for Python scripts
+      - "18084:18083"  # EMQX Web Admin Dashboard
+      - "8085:8083"    # MQTT over WebSockets
+    environment:
+      # Pulled from .env to secure the admin dashboard
+      - EMQX_DASHBOARD__DEFAULT_USERNAME=${EMQX_DASHBOARD__DEFAULT_USERNAME}
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=${EMQX_DASHBOARD__DEFAULT_PASSWORD}
+    volumes:
+      - emqx_data:/opt/emqx/data
+      - emqx_log:/opt/emqx/log
+    networks:
+      - energy_network
+
+# Shared Network & Persistent Storage
+networks:
+  energy_network:
+    driver: bridge
+
+volumes:
+  timescaledb_data:
+  emqx_data:
+  emqx_log:
